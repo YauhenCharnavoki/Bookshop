@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="row">
+    {% for book in books %}
+        <div class="col-md-4">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    {% if book.image %}
+                        <img class="card-img-top" style="height: 400px; width: 300px; display: block;" 
+                             src="{{ book.get_image_url }}" data-holder-rendered="true">
+                    {% else %}
+                        <img class="card-img-top" style="height: 400px; width: 300px; display: block;" 
+                             src="https://st2.depositphotos.com/3665639/6849/v/600/depositphotos_68491715-stock-illustration-pictograph-of-book-icon.jpg" 
+                             data-holder-rendered="true">
+                    {% endif %}
+                    <p class="card-text">
+                        <strong>{{ book.title }}</strong>
+                    </p>
+                    <p class="card-text">Author: {{ book.author }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <a href="{{ book.get_url_book }}" role="button" class="btn btn-sm btn-outline-secondary">View</a>
+                            {% if not user.is_authenticated  %}
+                                <a href="{% url 'cart' %}" role="button" class="btn btn-sm btn-outline-secondary">Add to cart</a>
+                            {% else %}
+                                <a href="{% url 'add' book.id %}" role="button" class="btn btn-sm btn-outline-secondary">Add to cart</a>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">{{ book.price }}$</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% if not user.is_authenticated %}
+        <div class="alert alert-info alert-dismissible">
+            <img src="https://cdndelivr.com/sticker/160/75/801d2bf987f04e75.webp">
+            To buy the product, you need to log in to your account or register!
+        </div>
+        <a href="{% url 'login' %}" role="button" class="btn btn-outline-secondary">Log in</a>
+        <a href="{% url 'registration' %}" role="button" class="btn btn-outline-secondary">Register</a>
+    
+    {% else %}
+
+        {% if cart.get_total_quantity == 0 %}
+            <div class="alert alert-info alert-dismissible">
+                <img src="https://cdndelivr.com/sticker/160/75/a840172f9ace3f3a.webp">
+                Your shopping cart is empty. Please go to the catalog and add the product to the cart.
+            </div>
+            <a href="{% url "catalog" %}" role="button" class="btn btn-outline-secondary">Go to catalog</a>        
+        
+        {% else %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Book</td>
+                        <td>Title</td>
+                        <td>Author</td>
+                        <td>Quantity</td>
+                        <td>Price per unit</td>
+                        <td>Total price</td>
+                        <td></td>
+                    </tr>
+                </thead>  
+                <tbody>
+                    {% for item in cart %}
+                        <tr>
+                            <td>
+                                {% if item.book.image %}
+                                    <img class="card-img-top"style="height: 100px; width: 75px" 
+                                         src="{{ item.book.get_image_url }}" data-holder-rendered="true">
+                                {% else %}
+                                    <img class="card-img-top"style="height: 100px; width: 75px" 
+                                         src="https://st2.depositphotos.com/3665639/6849/v/600/depositphotos_68491715-stock-illustration-pictograph-of-book-icon.jpg" 
+                                         data-holder-rendered="true">
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ item.book.title }}
+                            </td>
+                            <td>
+                                {{ item.book.author }}
+                            </td>
+                            </td>
+                            <td>
+                                <form action="{% url 'update' item.book.id %}" method="POST"> 
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" value="{{ item.quantity }}" id="id_quantity" 
+                                            name="quantity" min="1" max="{{ item.book.amount }}" step="1">
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Recalculate</button>
+                                </form>
+                            </td>
+                            <td>
+                                {{ item.price }}
+                            </td>
+                            <td>
+                                {{ item.total_price }}
+                            </td>
+                            <td>
+                                <a href="{% url 'remove' item.book.id %}" role="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                        <tr>
+                            <td>Total:</td>
+                            <td colspan="4"></td>
+                            <td>{{ cart.get_total_price }}</td>
+                        </tr>
+                </tbody>
+            </table>
+            <a href="{% url "buy" %}" role="button" class="btn btn-outline-secondary">Making buy</a>
+            <a href="{% url "catalog" %}" role="button" class="btn btn-outline-secondary">Continue shopping</a>
+            <a href="{% url "clear" %}" role="button" class="btn btn-outline-secondary">Clear cart</a>
+    
+    {% endif %}
+    {% endif %}
+{% endblock %}

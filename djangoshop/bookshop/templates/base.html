@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Shop</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+</head>
+<body> 
+    <header>
+        <div class="bg-dark collapse" id="navbarHeader">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-8 col-md-7 py-4">
+                <h4 class="text-white">About</h4>
+                {% if user.is_authenticated %} 
+                  <p class="text-muted">There are {{ books_amount }} books in this shop.</p>
+                  <p class="text-muted">{{ author_amount }} authors registered in this shop.</p>
+                  <p class="text-muted">You visit our shop {{ visits }} times.</p>
+                {% else %}
+                  <p class="text-muted">The door to the bookshop is the entrance to the universe 
+                                        of new knowledge and skills, allowing you to make yourself 
+                                        better and see the world around you in brighter colors. 
+                                        Now this door is not located somewhere in the city or even 
+                                        on the next street, but on your computer, tablet or smartphone.</p>
+                {% endif %}
+              </div>
+              <div class="col-sm-4 offset-md-1 py-4">
+                <h4 class="text-white">Contact</h4>
+                <ul class="list-unstyled">
+                  <li><a href="https://t.me/Chernookiy19" class="text-white">Telegram</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="navbar navbar-dark bg-dark box-shadow">
+          <div class="container d-flex justify-content-between">
+              <a href="{% url 'catalog' %}" class="navbar-brand">
+                  <img width="30" height="40" src="https://pngimg.com/uploads/simpsons/simpsons_PNG29.png">
+                  <strong>Book Shop</strong>
+              </a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="true" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+            <div>
+              {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" role="button" class="navbar-brand">
+                  <strong>{{ user.username }}</strong>
+                  {% if user.profile.photo %}
+                    <img class="rounded-circle" width="35" height="35" src="{{ user.profile.get_photo_url }}">
+                  {% else %}
+                    <img class="rounded-circle" width="35" height="35" src="https://okeygeek.ru/wp-content/uploads/2020/03/no_avatar.png">
+                  {% endif %}
+                </a>
+                <a href="{% url 'cart' %}" role="button" class="navbar-brand">
+                  <img width="30" height="30" src="https://pngimg.com/uploads/shopping_cart/shopping_cart_PNG65.png">
+                  {{ cart.get_total_quantity }}
+                </a>      
+              {% else %}
+                <a href="{% url 'login' %}" role="button" class="btn btn-outline-secondary">Log in</a>
+                <a href="{% url 'registration' %}" role="button" class="btn btn-outline-secondary">Register</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>    
+        {% if user.is_authenticated %}
+          <p><div class="container d-flex justify-content-between">
+              <span></span>
+              <span></span>
+              <b id="timer" class="badge badge-danger">The session expires after {{ request.session.get_expiry_age }} seconds</b>
+              <script>
+                  let Timer = document.getElementById("timer");
+                  let sessionTime = {{ request.session.get_expiry_age }};
+                  setInterval(countDown, 1000);
+                              
+                  function countDown(){
+                      Timer.innerHTML = `The session expires after ${sessionTime} seconds`;
+                      sessionTime--;
+                      }
+              </script>
+          </div></p>
+        {% endif %}
+    </header>
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    <div class="col-md-12">
+        <div class="card-body">
+            {% if user.profile.photo %}
+                <img class="card-img-top" style="height: 200px; width: 200px; display: block;" 
+                     src="{{ user.profile.get_photo_url }}" data-holder-rendered="true">
+            {% else %}
+                <img class="card-img-top" style="height: 200px; width: 200px; display: block;" 
+                     src="https://okeygeek.ru/wp-content/uploads/2020/03/no_avatar.png" data-holder-rendered="true">
+            {% endif %}
+            <h4 class="card-text">{{ user.username }}</h4>
+            <p class="card-text">Fullname: {{ user.first_name }} {{ user.last_name }}</p>
+            <p class="card-text">Email: {{ user.email }}</p>
+            <p class="card-text">Date of birth: {{ user.profile.date_of_birth }}</p>
+            <p class="card-text">Biography: {{ user.profile.biography }}</p>
+            <a href="{% url 'profile_edit' %}" role="button" class="btn btn-sm btn-outline-secondary">Edit</a> 
+            <a href="{% url 'logout' %}" role="button" class="btn btn-sm btn-outline-secondary">Log out</a>
+        </div>
+    </div>
+      
+{% endblock  %}
